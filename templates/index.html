@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Astronomy Picture of the Day</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>🚀 NASA Astronomy Picture of the Day</h1>
+        <p>Data source: science.nasa.gov (APOD) · Stored in PostgreSQL</p>
+        <p><a href="{{ url_for('database_view') }}" style="color:#4c6ef5; font-weight:600;">🗄️ View Database ({{ pictures|length }} records)</a></p>
+    </header>
+
+    <main>
+        <section class="fetch-box">
+            <form action="{{ url_for('fetch_latest') }}" method="post">
+                <button type="submit">🔄 Fetch Latest from NASA</button>
+            </form>
+            <p class="hint">Pulls the 10 most recent APOD entries and saves new ones to PostgreSQL. Duplicates are skipped automatically.</p>
+        </section>
+
+        <section class="gallery">
+            {% if pictures %}
+                {% for pic in pictures %}
+                <article class="card">
+                    <div class="card-header">
+                        <span class="date">{{ pic.date }}</span>
+                        <h2>{{ pic.title }}</h2>
+                    </div>
+                    {% if pic.media_type == 'image' %}
+                        <img src="{{ pic.url }}" alt="{{ pic.title }}" loading="lazy">
+                        {% if pic.hdurl and pic.hdurl != pic.url %}
+                            <a class="hd-link" href="{{ pic.hdurl }}" target="_blank" rel="noopener">View HD Image ↗</a>
+                        {% else %}
+                            <a class="hd-link" href="{{ pic.url }}" target="_blank" rel="noopener">Open Full Image ↗</a>
+                        {% endif %}
+                    {% else %}
+                        <div class="video-placeholder">
+                            <p>📹 This entry is a {{ pic.media_type }}, not an image.</p>
+                            <p><a href="{{ pic.url }}" target="_blank" rel="noopener">Open original ↗</a></p>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="explanation">{{ pic.explanation }}</p>
+                        <p class="copyright">Credit: {{ pic.copyright }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <p class="empty">No data in database yet. Click "Fetch Latest from NASA" above to populate.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>Data provided by NASA Open APIs · Stored in PostgreSQL</p>
+    </footer>
+</body>
+</html>

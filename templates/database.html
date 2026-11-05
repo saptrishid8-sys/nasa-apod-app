@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database View — NASA APOD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+        th, td { padding: 0.5rem; border-bottom: 1px solid #2a2f45; text-align: left; vertical-align: top; }
+        th { background: #1a1f35; color: #4c6ef5; position: sticky; top: 0; }
+        tr:hover { background: #1a1f35; }
+        td.title { max-width: 250px; }
+        td.explanation { max-width: 400px; color: #a0aec0; }
+        .nav { margin: 1rem 0; }
+        .nav a { color: #4c6ef5; margin-right: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🗄️ Database View</h1>
+        <p>nasa_db.apod — {{ rows|length }} record(s)</p>
+    </header>
+    <main>
+        <div class="nav">
+            <a href="{{ url_for('index') }}">← Back to Gallery</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Media</th>
+                    <th>Explanation</th>
+                    <th>Credit</th>
+                    <th>Fetched</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.date }}</td>
+                    <td class="title">{{ r.title }}</td>
+                    <td>{{ r.media_type }}</td>
+                    <td class="explanation">{{ r.explanation[:150] }}{% if r.explanation|length > 150 %}...{% endif %}</td>
+                    <td>{{ r.copyright }}</td>
+                    <td>{{ r.fetched_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
